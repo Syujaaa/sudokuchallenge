@@ -774,14 +774,15 @@ export default function Sudoku() {
                       <span className="font-bold">{username}</span>.
                     </p>
                   </div>
-
-                  <button
-                    onClick={logout}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg 
+                  {!running && (
+                    <button
+                      onClick={logout}
+                      className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg 
                  font-bold shadow-md hover:shadow-lg transition"
-                  >
-                    Logout
-                  </button>
+                    >
+                      Logout
+                    </button>
+                  )}
                 </div>
               ) : (
                 <div className="flex gap-3 mt-2">
