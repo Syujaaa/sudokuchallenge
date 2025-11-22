@@ -755,7 +755,7 @@ export default function Sudoku() {
 
           <aside className="bg-white rounded-2xl shadow-lg p-3 sm:p-4 border border-indigo-100 h-fit">
             <div className="mb-4">
-              {loggedIn ? (
+              {loggedIn && !loading ? (
                 <div className="space-y-3">
                   <div>
                     <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-1">
