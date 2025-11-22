@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import BASE_URL from "../api";
 import Swal from "sweetalert2";
 import Footer from "../components/Footer";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 export default function RegisterForm() {
   const navigate = useNavigate();
@@ -17,9 +18,15 @@ export default function RegisterForm() {
   const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // hCaptcha states
+  const [hcaptchaToken, setHcaptchaToken] = useState("");
+  const [hcaptchaError, setHcaptchaError] = useState("");
+  const hcaptchaRef = useRef(null);
+
   async function handleRegister(e) {
     e.preventDefault();
     setServerError("");
+    setHcaptchaError("");
     const newErrors = {};
 
     if (!username.trim()) newErrors.username = "Username cannot be empty";
@@ -35,10 +42,14 @@ export default function RegisterForm() {
     if (password && verifyPass && password !== verifyPass)
       newErrors.verifyPass = "Passwords do not match";
 
+    // cek hCaptcha
+    if (!hcaptchaToken) {
+      newErrors.hcaptcha = "Please complete the captcha";
+    }
+
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
-    // submit to API
     setLoading(true);
 
     Swal.fire({
@@ -53,13 +64,17 @@ export default function RegisterForm() {
       const res = await fetch(`${BASE_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: username.trim(), password }),
+        body: JSON.stringify({
+          username: username.trim(),
+          password,
+          hcaptchaToken: hcaptchaToken, // kirim token ke server untuk verifikasi
+        }),
       });
 
       const body = await res.json().catch(() => ({}));
 
       if (res.status === 201) {
-        Swal.close(); // ⬅️ pastikan loading ditutup
+        Swal.close();
 
         await Swal.fire({
           icon: "success",
@@ -86,13 +101,39 @@ export default function RegisterForm() {
         setServerError(body.message || "Server error");
       }
     } catch (err) {
-      Swal.close(); 
+      Swal.close();
 
       console.error(err);
       setServerError("Network error");
     } finally {
       setLoading(false);
+      // reset captcha agar user bisa coba lagi (opsional)
+      if (hcaptchaRef.current) {
+        hcaptchaRef.current.resetCaptcha();
+        setHcaptchaToken("");
+      }
     }
+  }
+
+  // Callback saat hCaptcha sukses
+  function onHcaptchaVerify(token) {
+    setHcaptchaToken(token);
+    setHcaptchaError("");
+    setErrors((s) => {
+      const copy = { ...s };
+      delete copy.hcaptcha;
+      return copy;
+    });
+  }
+
+  function onHcaptchaExpire() {
+    setHcaptchaToken("");
+    setHcaptchaError("Captcha expired, please complete it again");
+  }
+
+  function onHcaptchaError(err) {
+    console.error("hCaptcha error:", err);
+    setHcaptchaError("Captcha error, try again");
   }
 
   return (
@@ -172,7 +213,7 @@ export default function RegisterForm() {
             </div>
 
             {/* VERIFY PASSWORD */}
-            <div className="mb-6">
+            <div className="mb-4">
               <label className="block font-medium mb-1">Confirm password</label>
               <div className="relative">
                 <input
@@ -196,6 +237,27 @@ export default function RegisterForm() {
               </div>
               {errors.verifyPass && (
                 <p className="text-red-600 text-sm mt-1">{errors.verifyPass}</p>
+              )}
+            </div>
+
+            {/* HCAPTCHA WIDGET */}
+            <div className="mb-4 flex flex-col items-center justify-center">
+              <label className="block font-medium mb-2">Captcha</label>
+
+              <div className="flex justify-center">
+                <HCaptcha
+                  sitekey="805e24ac-e564-49b4-8826-cefa686cd5ea"
+                  onVerify={onHcaptchaVerify}
+                  onExpire={onHcaptchaExpire}
+                  onError={onHcaptchaError}
+                  ref={hcaptchaRef}
+                />
+              </div>
+
+              {(errors.hcaptcha || hcaptchaError) && (
+                <p className="text-red-600 text-sm mt-1">
+                  {errors.hcaptcha || hcaptchaError}
+                </p>
               )}
             </div>
 

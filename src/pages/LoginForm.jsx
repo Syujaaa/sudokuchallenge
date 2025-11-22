@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import Swal from "sweetalert2";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 import BASE_URL from "../api";
 import Footer from "../components/Footer";
 
@@ -14,18 +15,41 @@ export default function LoginForm() {
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
 
+  // === HCAPTCHA ===
+  const [captchaToken, setCaptchaToken] = useState("");
+  const [hcaptchaError, setHcaptchaError] = useState("");
+  const hcaptchaRef = useRef(null);
+
+  const onHcaptchaVerify = (token) => {
+    setCaptchaToken(token);
+    setHcaptchaError("");
+  };
+
+  const onHcaptchaExpire = () => {
+    setCaptchaToken("");
+    setHcaptchaError("Captcha expired. Please verify again.");
+  };
+
+  const onHcaptchaError = () => {
+    setCaptchaToken("");
+    setHcaptchaError("Captcha failed. Please try again.");
+  };
+
   async function handleLogin(e) {
     e.preventDefault();
     setServerError("");
 
     const newErrors = {};
+
     if (!username.trim()) newErrors.username = "Username cannot be empty";
     if (!password.trim()) newErrors.password = "Password cannot be empty";
+
+    // === captcha wajib ===
+    if (!captchaToken) newErrors.hcaptcha = "Please complete the captcha";
 
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
 
-    // tampilkan loading Swal
     Swal.fire({
       title: "Processing...",
       html: "Please wait",
@@ -39,21 +63,19 @@ export default function LoginForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({
+          username,
+          password,
+          "h-captcha-response": captchaToken, // <-- kirim token ke backend
+        }),
       });
 
-      // coba parse body (jika bukan JSON akan di-catch)
       const body = await res.json().catch(() => ({}));
 
-      // tutup loading Swal segera setelah mendapatkan respon
       Swal.close();
 
-      // jika status 200 / ok => sukses
       if (res.ok) {
-        // server boleh mengembalikan token; simpan kalau ada
-        if (body.token) {
-          localStorage.setItem("sudoku_token", body.token);
-        }
+        if (body.token) localStorage.setItem("sudoku_token", body.token);
 
         await Swal.fire({
           icon: "success",
@@ -66,11 +88,9 @@ export default function LoginForm() {
         return;
       }
 
-      // bukan ok => tangani berdasarkan status
       if (res.status === 401) {
         setServerError(body.message || "Incorrect username or password");
       } else if (res.status === 403) {
-        // banned atau forbidden
         const reason = body.reason ? `: ${body.reason}` : "";
         setServerError((body.message || "Access denied") + reason);
       } else if (res.status === 400) {
@@ -79,7 +99,6 @@ export default function LoginForm() {
         setServerError(body.message || `Server error (${res.status})`);
       }
     } catch (err) {
-      // pastikan loading Swal ditutup kalau fetch error
       Swal.close();
       console.error(err);
       setServerError("Network error");
@@ -88,7 +107,6 @@ export default function LoginForm() {
 
   return (
     <div className="min-h-screen flex flex-col justify-between bg-gray-100">
-      {/* CONTENT */}
       <div className="flex-grow flex items-center justify-center px-4">
         <div className="w-full max-w-md relative">
           <button
@@ -163,6 +181,25 @@ export default function LoginForm() {
               )}
             </div>
 
+            {/* === HCAPTCHA === */}
+            <div className="mb-6 flex flex-col items-center">
+              <label className="block font-medium mb-2">Captcha</label>
+
+              <HCaptcha
+                sitekey="805e24ac-e564-49b4-8826-cefa686cd5ea"
+                onVerify={onHcaptchaVerify}
+                onExpire={onHcaptchaExpire}
+                onError={onHcaptchaError}
+                ref={hcaptchaRef}
+              />
+
+              {(errors.hcaptcha || hcaptchaError) && (
+                <p className="text-red-600 text-sm mt-1">
+                  {errors.hcaptcha || hcaptchaError}
+                </p>
+              )}
+            </div>
+
             <button
               type="submit"
               className="w-full py-2 bg-blue-600 text-white rounded-xl text-lg font-medium hover:bg-blue-700 transition"
@@ -183,7 +220,6 @@ export default function LoginForm() {
         </div>
       </div>
 
-      {/* FOOTER */}
       <Footer />
     </div>
   );
