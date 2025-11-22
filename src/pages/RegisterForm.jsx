@@ -29,9 +29,13 @@ export default function RegisterForm() {
     setHcaptchaError("");
     const newErrors = {};
 
-    if (!username.trim()) newErrors.username = "Username cannot be empty";
-    else if (username.length < 3)
+    if (!username.trim()) {
+      newErrors.username = "Username cannot be empty";
+    } else if (username.length < 3) {
       newErrors.username = "Username must be at least 3 characters";
+    } else if (/\s/.test(username)) {
+      newErrors.username = "Username cannot contain spaces"; 
+    }
 
     if (!password.trim()) newErrors.password = "Password cannot be empty";
     else if (password.length < 6)
