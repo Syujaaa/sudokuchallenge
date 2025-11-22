@@ -610,6 +610,106 @@ export default function Sudoku() {
                       ▶️ Start Game
                     </button>
                   </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6 w-full max-w-md mx-auto">
+                    <button
+                      onClick={() => {
+                        Swal.fire({
+                          title: "📘 Application Overview",
+                          html: `
+          <p style="text-align:left">
+          Sudoku Challenge is a number-based logic puzzle designed to improve focus, accuracy, 
+          and critical thinking. This platform is optimized to be lightweight, fast, 
+          and easy to use on any device.
+          </p>
+        `,
+                          icon: "info",
+                          confirmButtonText: "Close",
+                        });
+                      }}
+                      className="w-full bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 text-white px-4 py-1.5 rounded-md font-semibold shadow-md hover:shadow-lg transition transform hover:scale-105 text-sm flex items-center justify-center gap-2"
+                    >
+                      📘 <span>Application Overview</span>
+                    </button>
+
+                    {/* How to Play */}
+                    <button
+                      onClick={() => {
+                        Swal.fire({
+                          title: "🎮 How to Play",
+                          html: `
+         <ul style="text-align:left; line-height:1.6">
+  <li>• Begin by creating an account. Register with a username, password, and password confirmation.</li>
+  <li>• After registering, log in using the credentials you created.</li>
+  <li>• Choose your preferred difficulty level and click the <b>Start Game</b> button.</li>
+  <li>• Select any cell on the board, then press a number button below to fill the chosen cell.</li>
+  <li>• If you're unsure about a number, enable <b>Pencil Mode</b> to place temporary notes.</li>
+  <li>• Once all cells are correctly filled with no red-highlighted mistakes, the puzzle will automatically be marked as completed.</li>
+  <li>• If you finish the puzzle quickly, your completion time will appear on the leaderboard.</li>
+  <li>• Enjoy the challenge and have fun!</li>
+</ul>
+
+        `,
+                          icon: "info",
+                          confirmButtonText: "Got it",
+                        });
+                      }}
+                      className="w-full bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-white px-4 py-1.5 rounded-md font-semibold shadow-md hover:shadow-lg transition transform hover:scale-105 text-sm flex items-center justify-center gap-2"
+                    >
+                      🎮 <span>How to Play</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        Swal.fire({
+                          title: "👨‍💻 About the Developer",
+                          html: `
+         <p style="text-align:left">
+  This application was developed by Farras Syuja, a full-stack developer who created this Sudoku game 
+  with a strong focus on speed, user experience, and a clean, minimalistic interface.
+  <br><br>
+  For more information about the developer and other projects, feel free to visit:
+  <br>
+  <a href="https://farrassyuja.my.id/" target="_blank" style="color:#2563eb; font-weight:bold;">
+    farrassyuja.my.id
+  </a>
+</p>
+
+
+        `,
+                          icon: "info",
+                          confirmButtonText: "Close",
+                        });
+                      }}
+                      className="w-full bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600 text-white px-4 py-1.5 rounded-md font-semibold shadow-md hover:shadow-lg transition transform hover:scale-105 text-sm flex items-center justify-center gap-2"
+                    >
+                      👨‍💻 <span>About the Developer</span>
+                    </button>
+
+                    {/* Privacy Policy */}
+                    <button
+                      onClick={() => {
+                        Swal.fire({
+                          title: "🔒 Privacy Policy",
+                          html: `
+         <p style="text-align:left">
+  This application does not collect or store any personal user data beyond the information required for account creation. 
+  All user passwords are securely hashed using bcrypt, ensuring that they cannot be viewed by the public or even by the developer.
+  No cookies, tracking systems, or sensitive data storage mechanisms are used by this application itself. 
+  However, third-party services such as Google AdSense may use cookies to display personalized advertisements.
+</p>
+
+        `,
+                          icon: "info",
+                          confirmButtonText: "Close",
+                        });
+                      }}
+                      className="w-full bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white px-4 py-1.5 rounded-md font-semibold shadow-md hover:shadow-lg transition transform hover:scale-105 text-sm flex items-center justify-center gap-2"
+                    >
+                      🔒 <span>Privacy Policy</span>
+                    </button>
+                  </div>
+
                   <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto opacity-20">
                     📋
                   </div>
