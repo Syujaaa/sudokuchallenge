@@ -755,7 +755,7 @@ export default function Sudoku() {
 
           <aside className="bg-white rounded-2xl shadow-lg p-3 sm:p-4 border border-indigo-100 h-fit">
             <div className="mb-4">
-              {loggedIn && !loading ? (
+              {loggedIn ? (
                 <div className="space-y-3">
                   <div>
                     <label className="block text-xs sm:text-sm font-bold text-gray-700 mb-1">
@@ -785,27 +785,29 @@ export default function Sudoku() {
                   )}
                 </div>
               ) : (
-                <div className="flex gap-3 mt-2">
-                  <Link
-                    to="/login"
-                    className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 
+                !loading && (
+                  <div className="flex gap-3 mt-2">
+                    <Link
+                      to="/login"
+                      className="flex-1 bg-gradient-to-r from-blue-600 to-blue-700 
                hover:from-blue-700 hover:to-blue-800 text-white 
                py-2 rounded-lg font-bold shadow-lg 
                transition transform hover:scale-[1.03] text-center"
-                  >
-                    Login
-                  </Link>
+                    >
+                      Login
+                    </Link>
 
-                  <Link
-                    to="/register"
-                    className="flex-1 bg-gradient-to-r from-green-600 to-green-700
+                    <Link
+                      to="/register"
+                      className="flex-1 bg-gradient-to-r from-green-600 to-green-700
                hover:from-green-700 hover:to-green-800 text-white 
                py-2 rounded-lg font-bold shadow-lg
                transition transform hover:scale-[1.03] text-center"
-                  >
-                    Register
-                  </Link>
-                </div>
+                    >
+                      Register
+                    </Link>
+                  </div>
+                )
               )}
             </div>
 
