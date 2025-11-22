@@ -722,40 +722,59 @@ export default function Sudoku() {
               </div>
             ) : (
               <div className="space-y-2 max-h-96 overflow-y-auto">
-                {leaderboard.map((r, i) => (
-                  <div
-                    key={r.id}
-                    className={`flex items-center justify-between p-3 rounded-lg ${
-                      i < 3
-                        ? "bg-gradient-to-r " +
-                          (i === 0
-                            ? "from-yellow-50 to-yellow-100 border-l-4 border-yellow-400"
+                {leaderboard.map((r, i) => {
+                  const isMe = r.username === username;
+
+                  return (
+                    <div
+                      key={r.id}
+                      className={`flex items-center justify-between p-3 rounded-lg transition
+        ${
+          isMe
+            ? "bg-indigo-50 border-l-4 border-indigo-500 shadow-sm"
+            : i < 3
+            ? "bg-gradient-to-r " +
+              (i === 0
+                ? "from-yellow-50 to-yellow-100 border-l-4 border-yellow-400"
+                : i === 1
+                ? "from-gray-50 to-gray-100 border-l-4 border-gray-400"
+                : "from-orange-50 to-orange-100 border-l-4 border-orange-400")
+            : "bg-gray-50 hover:bg-gray-100"
+        }
+      `}
+                    >
+                      <div className="flex items-center gap-3 flex-1">
+                        <span className="text-lg font-bold text-gray-600 w-6 text-center">
+                          {i === 0
+                            ? "🥇"
                             : i === 1
-                            ? "from-gray-50 to-gray-100 border-l-4 border-gray-400"
-                            : "from-orange-50 to-orange-100 border-l-4 border-orange-400")
-                        : "bg-gray-50 hover:bg-gray-100"
-                    } transition`}
-                  >
-                    <div className="flex items-center gap-3 flex-1">
-                      <span className="text-lg font-bold text-gray-600 w-6 text-center">
-                        {i === 0
-                          ? "🥇"
-                          : i === 1
-                          ? "🥈"
-                          : i === 2
-                          ? "🥉"
-                          : `${i + 1}.`}
-                      </span>
-                      <span className="font-semibold text-gray-800 truncate">
-                        {r.username}
+                            ? "🥈"
+                            : i === 2
+                            ? "🥉"
+                            : `${i + 1}.`}
+                        </span>
+
+                        <span
+                          className={`font-semibold truncate ${
+                            isMe ? "text-indigo-700" : "text-gray-800"
+                          }`}
+                        >
+                          {r.username}
+                          {isMe && " (You)"}
+                        </span>
+                      </div>
+
+                      <span
+                        className={`font-mono font-bold text-sm ${
+                          isMe ? "text-indigo-700" : "text-indigo-600"
+                        }`}
+                      >
+                        {Math.floor(r.time_seconds / 60)}:
+                        {String(r.time_seconds % 60).padStart(2, "0")}
                       </span>
                     </div>
-                    <span className="font-mono font-bold text-indigo-600 text-sm">
-                      {Math.floor(r.time_seconds / 60)}:
-                      {String(r.time_seconds % 60).padStart(2, "0")}
-                    </span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </aside>
