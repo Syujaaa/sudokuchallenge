@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 // Density menentukan *chance dihapus*, tetap dipakai
 const LEVEL_MAP = {
   easy: 0.0,
-  medium: 0.10,
+  medium: 0.05,
   hard: 0.65,
   expert: 0.75,
 };
