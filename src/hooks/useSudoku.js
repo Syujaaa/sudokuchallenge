@@ -13,9 +13,9 @@ const LEVEL_MAP = {
 // Jumlah angka terbuka (clues) PASTI
 const OPEN_COUNT = {
   easy: 40,
-  medium: 25,
-  hard: 6,
-  expert: 3,
+  medium: 29,
+  hard: 15,
+  expert: 10,
 };
 
 export function useSudoku(level = "easy") {
