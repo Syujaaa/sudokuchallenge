@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 // Density menentukan *chance dihapus*, tetap dipakai
 const LEVEL_MAP = {
   easy: 0.0,
-  medium: 0.15,
+  medium: 0.10,
   hard: 0.65,
   expert: 0.75,
 };
@@ -13,7 +13,7 @@ const LEVEL_MAP = {
 // Jumlah angka terbuka (clues) PASTI
 const OPEN_COUNT = {
   easy: 40,
-  medium: 20,
+  medium: 25,
   hard: 6,
   expert: 3,
 };
