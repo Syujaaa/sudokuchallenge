@@ -437,46 +437,59 @@ export default function Sudoku() {
     async function autoSubmit() {
       let finalUsername = username;
 
-      // if (!finalUsername) {
-      //   const n = prompt("Enter your username:");
-      //   if (!n) return;
-      //   finalUsername = n;
-      //   setUsername(n);
-      //   localStorage.setItem("sudoku_username", n);
-      // }
+      // === TAMPILKAN LOADING ===
+      Swal.fire({
+        title: "Amazing...!",
+        html: "Please wait a moment",
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
 
-      await fetch(`${BASE_URL}/leaderboard`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: finalUsername,
-          difficulty: level,
-          time_seconds: seconds,
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          Swal.fire({
-            icon: "success",
-            title: "🎉 Sudoku Completed!",
-            html: `
+      try {
+        const res = await fetch(`${BASE_URL}/leaderboard`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: finalUsername,
+            difficulty: level,
+            time_seconds: seconds,
+          }),
+        });
+
+        const data = await res.json();
+
+        // Tutup loading
+        Swal.close();
+
+        // === HASIL SUKSES ===
+        Swal.fire({
+          icon: "success",
+          title: "🎉 Sudoku Completed!",
+          html: `
         <p>${data.message}</p>
         <p class="text-sm text-gray-600 mt-1">
           Difficulty: <b>${level}</b><br/>
           Time: <b>${seconds} seconds</b>
         </p>
       `,
-            confirmButtonText: "OK",
-            confirmButtonColor: "#4F46E5",
-          });
-        })
-        .catch(() => {
-          Swal.fire({
-            icon: "error",
-            title: "Submission Failed",
-            text: "There was a problem saving your score.",
-          });
+          confirmButtonText: "OK",
+          confirmButtonColor: "#4F46E5",
         });
+      } catch (err) {
+        // Tutup loading
+        Swal.close();
+
+        // === HASIL GAGAL ===
+        Swal.fire({
+          icon: "error",
+          title: "Submission Failed",
+          text: "There was a problem saving your score.",
+        });
+      }
+
       setStarted(false);
       fetchLeaderboard();
     }
