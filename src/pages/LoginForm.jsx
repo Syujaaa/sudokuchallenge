@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft, LogIn } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
@@ -14,7 +14,6 @@ export default function LoginForm() {
   const [showPass, setShowPass] = useState(false);
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
-
 
   const [captchaToken, setCaptchaToken] = useState("");
   const [hcaptchaError, setHcaptchaError] = useState("");
@@ -44,7 +43,6 @@ export default function LoginForm() {
     if (!username.trim()) newErrors.username = "Username cannot be empty";
     if (!password.trim()) newErrors.password = "Password cannot be empty";
 
- 
     if (!captchaToken) newErrors.hcaptcha = "Please complete the captcha";
 
     setErrors(newErrors);
@@ -66,7 +64,7 @@ export default function LoginForm() {
         body: JSON.stringify({
           username,
           password,
-          "h-captcha-response": captchaToken, 
+          "h-captcha-response": captchaToken,
         }),
       });
 
@@ -131,7 +129,6 @@ export default function LoginForm() {
               </p>
             )}
 
-      
             <div className="mb-5">
               <label className="block font-medium mb-1">Username</label>
               <input
@@ -180,7 +177,6 @@ export default function LoginForm() {
               )}
             </div>
 
-
             <div className="mb-6 flex flex-col items-center">
               <label className="block font-medium mb-2">Captcha</label>
 
@@ -201,8 +197,9 @@ export default function LoginForm() {
 
             <button
               type="submit"
-              className="w-full py-2 bg-blue-600 text-white rounded-xl text-lg font-medium hover:bg-blue-700 transition"
+              className="w-full py-2 bg-blue-600 text-white rounded-xl text-lg font-medium hover:bg-blue-700 transition flex items-center justify-center gap-2 cursor-pointer active:scale-95"
             >
+              <LogIn size={20} />
               Login
             </button>
 

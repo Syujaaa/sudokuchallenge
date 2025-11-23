@@ -29,6 +29,26 @@ export default function Sudoku() {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [surrendered, setSurrendered] = useState(false);
+  const [filledCells, setFilledCells] = useState(new Set());
+
+  const motivationalMessages = [
+    "You've got this! Try again!",
+    "Don't give up! You're almost there!",
+    "Keep pushing, you can do better!",
+    "Every attempt makes you stronger!",
+    "Try once more, believe in yourself!",
+    "You're closer than you think!",
+    "Learn from this and come back!",
+  ];
+
+  const getRandomMotivation = () => {
+    return motivationalMessages[
+      Math.floor(Math.random() * motivationalMessages.length)
+    ];
+  };
+
+  const [currentMotivation, setCurrentMotivation] = useState("");
 
   const boardRef = useRef(board);
   const notesRef = useRef(notes);
@@ -147,6 +167,15 @@ export default function Sudoku() {
     setRunning(true);
   }
 
+  function handleBackFromSurrender() {
+    setSurrendered(false);
+    setStarted(false);
+    setBoard(Array(81).fill(null));
+    setFilledCells(new Set());
+    setSeconds(0);
+    setCurrentMotivation("");
+  }
+
   async function surrender() {
     const result = await Swal.fire({
       title: "Surrender?",
@@ -159,13 +188,54 @@ export default function Sudoku() {
 
     if (!result.isConfirmed) return;
 
-    setStarted(false);
+    // Get random motivational message
+    setCurrentMotivation(getRandomMotivation());
+
+    // Start surrender animation
+    setSurrendered(true);
     setRunning(false);
-    setBoard(Array(81).fill(null));
-    setNotes({});
     setHistory([]);
     setSelectedIndex(null);
-    setSeconds(0);
+    setFilledCells(new Set());
+
+    // Animate filling the board with solution
+    let newBoard = [...board];
+    let newNotes = { ...notes };
+    const cellsToFill = [];
+
+    for (let i = 0; i < 81; i++) {
+      const userValue = Number(newBoard[i]);
+      const correctValue = Number(solution[i]);
+
+      // Only fill if:
+      // 1. Cell is empty (null)
+      // 2. Cell has wrong value
+      // 3. Cell has pencil notes (should be replaced with correct number)
+      const hasNotes = newNotes[i] && newNotes[i].length > 0;
+      const isWrong = userValue !== null && userValue !== correctValue;
+      const isEmpty = userValue === null;
+
+      if (isEmpty || isWrong || hasNotes) {
+        cellsToFill.push(i);
+      }
+    }
+
+    // Shuffle cells for random filling
+    for (let i = cellsToFill.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [cellsToFill[i], cellsToFill[j]] = [cellsToFill[j], cellsToFill[i]];
+    }
+
+    // Fill each cell with delay for animation effect
+    for (let idx of cellsToFill) {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      newBoard[idx] = Number(solution[idx]);
+      // Clear notes for this cell
+      delete newNotes[idx];
+      setBoard([...newBoard]);
+      setNotes({ ...newNotes });
+      setFilledCells((prev) => new Set([...prev, idx]));
+    }
   }
 
   useEffect(() => {
@@ -383,7 +453,6 @@ export default function Sudoku() {
     const correct = checkComplete();
     if (!correct) return;
 
- 
     setRunning(false);
 
     async function autoSubmit() {
@@ -433,9 +502,7 @@ export default function Sudoku() {
 
         const data = await res.json();
 
-    
         Swal.close();
-
 
         Swal.fire({
           icon: "success",
@@ -451,10 +518,8 @@ export default function Sudoku() {
           confirmButtonColor: "#4F46E5",
         });
       } catch (err) {
-
         Swal.close();
 
-  
         Swal.fire({
           icon: "error",
           title: "Submission Failed",
@@ -477,7 +542,6 @@ export default function Sudoku() {
     }
   });
 
-
   useEffect(() => {
     function handleKey(e) {
       if (!started || !running) return;
@@ -487,11 +551,9 @@ export default function Sudoku() {
 
       if (initial[selectedIndex]) return;
 
-    
       if (/^[1-9]$/.test(key)) {
         const num = Number(key);
 
-    
         if (counts[num] === 0) {
           console.warn(`Angka ${num} sudah penuh (9 kotak).`);
           return;
@@ -501,12 +563,10 @@ export default function Sudoku() {
         return;
       }
 
- 
       if (key === "Backspace" || key === "Delete") {
         handleClear();
         return;
       }
-
 
       if (key === "p" || key === "P") {
         togglePencilMode();
@@ -550,19 +610,38 @@ export default function Sudoku() {
             ref={boardContainerRef}
           >
             <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-4 mb-4">
-              <div className="text-2xl sm:text-3xl font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 rounded-xl shadow-lg flex items-center gap-2 w-full sm:w-auto justify-center">
-                ⏱️
-                <span className="font-mono">
-                  {Math.floor(seconds / 60)}:
-                  {String(seconds % 60).padStart(2, "0")}
-                </span>
-              </div>
-              {running && (
+              {surrendered ? (
+                <div className="flex flex-col gap-2 w-full sm:w-auto">
+                  <div className="text-2xl sm:text-3xl font-bold text-white bg-gradient-to-r from-red-600 to-orange-600 px-6 py-3 rounded-xl shadow-lg flex items-center gap-2 w-full sm:w-auto justify-center cursor-default">
+                    You Surrendered!
+                  </div>
+                  <div className="text-sm sm:text-base font-semibold text-center text-indigo-700 bg-indigo-100 px-4 py-2 rounded-lg shadow-md cursor-default">
+                    💪 {currentMotivation}
+                  </div>
+                </div>
+              ) : (
+                <div className="text-2xl sm:text-3xl font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 rounded-xl shadow-lg flex items-center gap-2 w-full sm:w-auto justify-center cursor-default">
+                  ⏱️
+                  <span className="font-mono">
+                    {Math.floor(seconds / 60)}:
+                    {String(seconds % 60).padStart(2, "0")}
+                  </span>
+                </div>
+              )}
+              {running && !surrendered && (
                 <button
                   onClick={surrender}
-                  className="w-full sm:w-auto bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-6 py-2 rounded-lg font-bold shadow-lg hover:shadow-xl transition transform hover:scale-105"
+                  className="w-full sm:w-auto bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white px-6 py-2 rounded-lg font-bold shadow-lg hover:shadow-xl transition transform hover:scale-105 cursor-pointer active:scale-95"
                 >
                   🚩 Surrender
+                </button>
+              )}
+              {surrendered && (
+                <button
+                  onClick={handleBackFromSurrender}
+                  className="w-full sm:w-auto bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white px-6 py-2 rounded-lg font-bold shadow-lg hover:shadow-xl transition transform hover:scale-105 cursor-pointer active:scale-95"
+                >
+                  ← Back
                 </button>
               )}
             </div>
@@ -695,7 +774,6 @@ export default function Sudoku() {
                       👨‍💻 <span>About the Developer</span>
                     </button>
 
-              
                     <button
                       onClick={() => {
                         Swal.fire({
@@ -723,7 +801,7 @@ export default function Sudoku() {
                     📋
                   </div>
                 </div>
-              ) : running ? (
+              ) : running || surrendered ? (
                 <SudokuBoard
                   puzzle={board}
                   initial={initial}
@@ -731,6 +809,7 @@ export default function Sudoku() {
                   selectedIndex={selectedIndex}
                   notes={notes}
                   checkConflict={checkConflict}
+                  filledCells={filledCells}
                 />
               ) : null}
             </div>
@@ -745,6 +824,7 @@ export default function Sudoku() {
                 canDelete={canDelete}
                 handleUndo={handleUndo}
                 history={history}
+                disabled={surrendered}
               />
             )}
           </section>

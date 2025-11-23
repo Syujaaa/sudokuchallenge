@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft, UserPlus } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import BASE_URL from "../api";
 import Swal from "sweetalert2";
@@ -34,7 +34,7 @@ export default function RegisterForm() {
     } else if (username.length < 3) {
       newErrors.username = "Username must be at least 3 characters";
     } else if (/\s/.test(username)) {
-      newErrors.username = "Username cannot contain spaces"; 
+      newErrors.username = "Username cannot contain spaces";
     }
 
     if (!password.trim()) newErrors.password = "Password cannot be empty";
@@ -45,7 +45,6 @@ export default function RegisterForm() {
       newErrors.verifyPass = "Please confirm your password";
     if (password && verifyPass && password !== verifyPass)
       newErrors.verifyPass = "Passwords do not match";
-
 
     if (!hcaptchaToken) {
       newErrors.hcaptcha = "Please complete the captcha";
@@ -71,7 +70,7 @@ export default function RegisterForm() {
         body: JSON.stringify({
           username: username.trim(),
           password,
-          hcaptchaToken: hcaptchaToken, 
+          hcaptchaToken: hcaptchaToken,
         }),
       });
 
@@ -91,7 +90,6 @@ export default function RegisterForm() {
         return;
       }
 
- 
       Swal.close();
 
       if (res.status === 409) {
@@ -111,7 +109,7 @@ export default function RegisterForm() {
       setServerError("Network error");
     } finally {
       setLoading(false);
-   
+
       if (hcaptchaRef.current) {
         hcaptchaRef.current.resetCaptcha();
         setHcaptchaToken("");
@@ -141,10 +139,8 @@ export default function RegisterForm() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 px-4">
-
       <div className="flex-grow flex items-center justify-center">
         <div className="w-full max-w-md mx-auto">
-   
           <button
             onClick={() => navigate(-1)}
             className="mb-4 flex items-center gap-2 text-gray-700 hover:text-black transition"
@@ -186,7 +182,6 @@ export default function RegisterForm() {
               )}
             </div>
 
-   
             <div className="mb-4">
               <label className="block font-medium mb-1">Password</label>
               <div className="relative">
@@ -264,12 +259,13 @@ export default function RegisterForm() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-2 rounded-xl text-lg font-medium transition ${
+              className={`w-full py-2 rounded-xl text-lg font-medium transition flex items-center justify-center gap-2 cursor-pointer active:scale-95 ${
                 loading
-                  ? "bg-gray-400 text-white"
+                  ? "bg-gray-400 text-white cursor-not-allowed"
                   : "bg-green-600 text-white hover:bg-green-700"
               }`}
             >
+              <UserPlus size={20} />
               {loading ? "Registering..." : "Register"}
             </button>
 
@@ -286,7 +282,6 @@ export default function RegisterForm() {
         </div>
       </div>
 
-  
       <Footer />
     </div>
   );

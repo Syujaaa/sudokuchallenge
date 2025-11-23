@@ -9,48 +9,52 @@ export default function NumberPad({
   canDelete,
   handleUndo,
   history,
+  disabled = false,
 }) {
   return (
     <div className="mt-4 space-y-4 sm:space-y-5">
       <div className="flex justify-center gap-2 sm:gap-3 mb-4 flex-wrap">
         <button
           onClick={togglePencilMode}
+          disabled={disabled}
           title="Toggle Pencil Mode (P)"
           className={`
             px-4 sm:px-5 py-3 rounded-xl border-2 font-bold transition text-xl shadow-md hover:shadow-lg transform hover:scale-105 flex items-center gap-2
             ${
-              pencilMode
+              disabled
+                ? "bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed opacity-50"
+                : pencilMode
                 ? "bg-gradient-to-r from-yellow-400 to-yellow-500 text-white border-yellow-600 shadow-lg"
                 : "bg-white text-gray-700 hover:bg-yellow-50 border-gray-300 hover:border-yellow-300"
             }
           `}
         >
-          <FaPencilAlt /> 
+          <FaPencilAlt />
         </button>
 
         <button
           onClick={onClear}
-          disabled={!canDelete}
+          disabled={!canDelete || disabled}
           title="Delete Cell (Delete)"
           className={`px-4 sm:px-5 py-3 rounded-xl border-2 font-bold transition text-xl shadow-md hover:shadow-lg transform hover:scale-105 flex items-center gap-2 ${
-            canDelete
-              ? "bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 border-red-700 shadow-lg hover:shadow-xl"
-              : "bg-red-200 text-red-400 border-red-300 cursor-not-allowed opacity-50"
+            !canDelete || disabled
+              ? "bg-red-200 text-red-400 border-red-300 cursor-not-allowed opacity-50"
+              : "bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 border-red-700 shadow-lg hover:shadow-xl"
           }`}
         >
-          <FaTrash /> 
+          <FaTrash />
         </button>
         <button
           onClick={handleUndo}
-          disabled={history.length === 0}
+          disabled={history.length === 0 || disabled}
           title="Undo (Ctrl+Z)"
           className={`px-4 sm:px-5 py-3 rounded-xl border-2 font-bold transition text-xl shadow-md hover:shadow-lg transform hover:scale-105 flex items-center gap-2 ${
-            history.length > 0
+            history.length > 0 && !disabled
               ? "bg-gradient-to-r from-indigo-600 to-indigo-700 text-white hover:from-indigo-700 hover:to-indigo-800 border-indigo-800 shadow-lg hover:shadow-xl"
               : "bg-indigo-200 text-indigo-400 border-indigo-300 cursor-not-allowed opacity-50"
           }`}
         >
-          <FaUndo /> 
+          <FaUndo />
         </button>
       </div>
 

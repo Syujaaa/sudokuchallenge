@@ -9,6 +9,7 @@ import React from "react";
  * - onSelect(index)
  * - notes: { [index]: number[] } (optional)
  * - checkConflict: function(index, val) => boolean (optional)
+ * - filledCells: Set<number> (optional, for highlighting cells filled during surrender)
  */
 export default function SudokuBoard({
   puzzle = Array(81).fill(null),
@@ -17,6 +18,7 @@ export default function SudokuBoard({
   onSelect = () => {},
   notes = {},
   checkConflict, // optional
+  filledCells = new Set(), // optional
 }) {
   // fallback conflict checker (O(81) per cell) kalau parent tidak menyediakan
   function localCheckConflict(index, val) {
@@ -82,6 +84,8 @@ export default function SudokuBoard({
               ? checkConflict(i, val)
               : localCheckConflict(i, val)) || false;
 
+          const isFilledDuringSurrender = filledCells.has(i);
+
           const thickTop =
             row % 3 === 0
               ? "border-t-3 sm:border-t-4 border-t-indigo-800"
@@ -100,6 +104,8 @@ export default function SudokuBoard({
               : "border-b border-b-indigo-400";
           const bgClass = isError
             ? "!bg-red-400 text-white font-bold"
+            : isFilledDuringSurrender
+            ? "!bg-blue-500 text-white font-bold"
             : isSelected
             ? "!bg-blue-300"
             : isSameNumber
