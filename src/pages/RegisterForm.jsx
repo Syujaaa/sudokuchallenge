@@ -46,7 +46,7 @@ export default function RegisterForm() {
     if (password && verifyPass && password !== verifyPass)
       newErrors.verifyPass = "Passwords do not match";
 
-    // cek hCaptcha
+
     if (!hcaptchaToken) {
       newErrors.hcaptcha = "Please complete the captcha";
     }
@@ -71,7 +71,7 @@ export default function RegisterForm() {
         body: JSON.stringify({
           username: username.trim(),
           password,
-          hcaptchaToken: hcaptchaToken, // kirim token ke server untuk verifikasi
+          hcaptchaToken: hcaptchaToken, 
         }),
       });
 
@@ -91,7 +91,7 @@ export default function RegisterForm() {
         return;
       }
 
-      // Jika status bukan 201 → tutup loading
+ 
       Swal.close();
 
       if (res.status === 409) {
@@ -111,7 +111,7 @@ export default function RegisterForm() {
       setServerError("Network error");
     } finally {
       setLoading(false);
-      // reset captcha agar user bisa coba lagi (opsional)
+   
       if (hcaptchaRef.current) {
         hcaptchaRef.current.resetCaptcha();
         setHcaptchaToken("");
@@ -119,7 +119,6 @@ export default function RegisterForm() {
     }
   }
 
-  // Callback saat hCaptcha sukses
   function onHcaptchaVerify(token) {
     setHcaptchaToken(token);
     setHcaptchaError("");
@@ -142,10 +141,10 @@ export default function RegisterForm() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 px-4">
-      {/* AREA FORM TENGAH */}
+
       <div className="flex-grow flex items-center justify-center">
         <div className="w-full max-w-md mx-auto">
-          {/* BACK BUTTON */}
+   
           <button
             onClick={() => navigate(-1)}
             className="mb-4 flex items-center gap-2 text-gray-700 hover:text-black transition"
@@ -169,7 +168,6 @@ export default function RegisterForm() {
               </div>
             )}
 
-            {/* USERNAME */}
             <div className="mb-4">
               <label className="block font-medium mb-1">Username</label>
               <input
@@ -188,7 +186,7 @@ export default function RegisterForm() {
               )}
             </div>
 
-            {/* PASSWORD */}
+   
             <div className="mb-4">
               <label className="block font-medium mb-1">Password</label>
               <div className="relative">
@@ -216,7 +214,6 @@ export default function RegisterForm() {
               )}
             </div>
 
-            {/* VERIFY PASSWORD */}
             <div className="mb-4">
               <label className="block font-medium mb-1">Confirm password</label>
               <div className="relative">
@@ -244,7 +241,6 @@ export default function RegisterForm() {
               )}
             </div>
 
-            {/* HCAPTCHA WIDGET */}
             <div className="mb-4 flex flex-col items-center justify-center">
               <label className="block font-medium mb-2">Captcha</label>
 
@@ -290,7 +286,7 @@ export default function RegisterForm() {
         </div>
       </div>
 
-      {/* FOOTER */}
+  
       <Footer />
     </div>
   );

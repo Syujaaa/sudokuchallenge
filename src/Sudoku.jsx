@@ -30,7 +30,6 @@ export default function Sudoku() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Refs
   const boardRef = useRef(board);
   const notesRef = useRef(notes);
   const historyRef = useRef(history);
@@ -45,7 +44,6 @@ export default function Sudoku() {
   async function logout() {
     const token = localStorage.getItem("sudoku_token");
 
-    // Tampilkan konfirmasi
     const result = await Swal.fire({
       title: "Are you sure?",
       text: "Do you really want to log out?",
@@ -57,7 +55,6 @@ export default function Sudoku() {
       cancelButtonColor: "#3085d6",
     });
 
-    // Jika user menekan Cancel → batalkan logout
     if (!result.isConfirmed) return;
 
     try {
@@ -73,12 +70,10 @@ export default function Sudoku() {
       console.error("Logout error:", err);
     }
 
-    // Bersihkan session lokal
     localStorage.removeItem("sudoku_token");
     setLoggedIn(false);
     setUsername("");
 
-    // Notifikasi logout sukses
     Swal.fire({
       icon: "success",
       title: "Logged Out",
@@ -90,7 +85,6 @@ export default function Sudoku() {
   async function checkLogin() {
     const token = localStorage.getItem("sudoku_token");
 
-    // jika token tidak ada → user dianggap belum login
     if (!token) {
       setLoggedIn(false);
       setUsername("");
@@ -110,7 +104,6 @@ export default function Sudoku() {
         setUsername(data.username);
         setLoggedIn(true);
       } else {
-        // token invalid atau expired
         localStorage.removeItem("sudoku_token");
         setLoggedIn(false);
         setUsername("");
@@ -139,7 +132,6 @@ export default function Sudoku() {
     (board[selectedIndex] !== null ||
       (notes && notes[selectedIndex] && notes[selectedIndex].length > 0));
 
-  // ================= TIMER =================
   useEffect(() => {
     if (!running) return;
     const t = setInterval(() => setSeconds((s) => s + 1), 1000);
@@ -167,7 +159,6 @@ export default function Sudoku() {
 
     if (!result.isConfirmed) return;
 
-    // Reset game state
     setStarted(false);
     setRunning(false);
     setBoard(Array(81).fill(null));
@@ -177,7 +168,6 @@ export default function Sudoku() {
     setSeconds(0);
   }
 
-  // ================= START GAME =================
   useEffect(() => {
     if (!started) return;
 
@@ -187,15 +177,12 @@ export default function Sudoku() {
     setRunning(true);
 
     fetchLeaderboard();
-    // eslint-disable-next-line
   }, [puzzle]);
 
   useEffect(() => {
     fetchLeaderboard();
-    // eslint-disable-next-line
   }, [level, started]);
 
-  // ================= LEADERBOARD =================
   async function fetchLeaderboard() {
     try {
       setLoading(true);
@@ -209,7 +196,6 @@ export default function Sudoku() {
     }
   }
 
-  // ================= FIXED CHECK COMPLETE =================
   function checkComplete() {
     if (!solution) return false;
 
@@ -221,7 +207,6 @@ export default function Sudoku() {
     return true;
   }
 
-  // ================= BOARD ACTIONS =================
   function handleSelect(i) {
     setSelectedIndex(i);
   }
@@ -257,19 +242,17 @@ export default function Sudoku() {
       const currentVal = boardRef.current[selectedIndex];
       const isCurrentError = checkConflict(selectedIndex, currentVal);
 
-      // Jika belum memilih cell → auto pilih (TIDAK PUSH HISTORY)
       if (
         selectedIndex === null ||
         initial[selectedIndex] ||
         (boardRef.current[selectedIndex] !== null && !isCurrentError)
       ) {
-        // Cari cell yang ada angkanya
         const foundIndex = boardRef.current.findIndex((v) => v === num);
         if (foundIndex !== -1) {
           setSelectedIndex(foundIndex);
           return;
         }
-        // Jika tidak ada → pilih cell kosong pertama
+
         const emptyIndex = boardRef.current.findIndex((v) => v === null);
         if (emptyIndex !== -1) {
           setSelectedIndex(emptyIndex);
@@ -277,7 +260,6 @@ export default function Sudoku() {
         return;
       }
 
-      // Tidak bisa menulis jika nilai sudah benar
       if (currentVal !== null) {
         if (!isCurrentError) {
           console.warn(
@@ -287,18 +269,15 @@ export default function Sudoku() {
         }
       }
 
-      // Mode Pensil
       if (pencilMode) {
         const arr = new Set(notesRef.current[selectedIndex] || []);
         const exists = arr.has(num);
 
-        // Hitung state notes yang baru
         const newNotes = JSON.parse(JSON.stringify(notesRef.current));
         const updatedArr = new Set(newNotes[selectedIndex] || []);
         exists ? updatedArr.delete(num) : updatedArr.add(num);
         newNotes[selectedIndex] = Array.from(updatedArr);
 
-        // Push history SEBELUM perubahan
         pushHistory({
           board: [...boardRef.current],
           notes: JSON.parse(JSON.stringify(notesRef.current)),
@@ -309,7 +288,6 @@ export default function Sudoku() {
         return;
       }
 
-      // Jika angka sudah habis
       const newCounts = {};
       for (let n = 1; n <= 9; n++) newCounts[n] = 9;
       boardRef.current.forEach((v) => {
@@ -323,21 +301,18 @@ export default function Sudoku() {
         return;
       }
 
-      // Hitung state board dan notes yang baru
       const newBoard = [...boardRef.current];
       newBoard[selectedIndex] = num;
 
       const newNotes = JSON.parse(JSON.stringify(notesRef.current));
       delete newNotes[selectedIndex];
 
-      // Push history sebelum perubahan board/notes
       pushHistory({
         board: [...boardRef.current],
         notes: JSON.parse(JSON.stringify(notesRef.current)),
         index: selectedIndex,
       });
 
-      // Mode normal → set angka
       setBoard(newBoard);
       setNotes(newNotes);
     },
@@ -349,7 +324,6 @@ export default function Sudoku() {
 
     const last = historyRef.current[historyRef.current.length - 1];
 
-    // Restore board, notes, dan selectedIndex ke state sebelumnya
     setBoard(last.board);
     setNotes(last.notes);
 
@@ -357,7 +331,6 @@ export default function Sudoku() {
       setSelectedIndex(last.index);
     }
 
-    // Hapus entry terakhir dari history
     setHistory((h) => h.slice(0, h.length - 1));
   }, []);
 
@@ -365,14 +338,12 @@ export default function Sudoku() {
     if (selectedIndex === null) return;
     if (initial[selectedIndex]) return;
 
-    // Hitung state board dan notes yang baru
     const newBoard = [...boardRef.current];
     newBoard[selectedIndex] = null;
 
     const newNotes = JSON.parse(JSON.stringify(notesRef.current));
     delete newNotes[selectedIndex];
 
-    // Push history sebelum perubahan
     pushHistory({
       board: [...boardRef.current],
       notes: JSON.parse(JSON.stringify(notesRef.current)),
@@ -388,24 +359,6 @@ export default function Sudoku() {
   }
 
   function startGame() {
-    if (!loggedIn) {
-      Swal.fire({
-        title: "Login Required",
-        text: "You must login first before starting the game.",
-        icon: "warning",
-        confirmButtonText: "Go to Login",
-        showCancelButton: true,
-        cancelButtonText: "Cancel",
-        confirmButtonColor: "#2563eb", // blue
-        cancelButtonColor: "#6b7280", // gray
-      }).then((res) => {
-        if (res.isConfirmed) {
-          navigate("/login"); // redirect ke login
-        }
-      });
-
-      return; // Hentikan startGame
-    }
     setStarted(true);
     setIsFirstStart(true);
     generate(level);
@@ -413,7 +366,6 @@ export default function Sudoku() {
     setSeconds(0);
     setRunning(true);
 
-    // Scroll to board after a short delay to ensure render
     setTimeout(() => {
       if (boardContainerRef.current) {
         boardContainerRef.current.scrollIntoView({
@@ -423,7 +375,7 @@ export default function Sudoku() {
       }
     }, 100);
   }
-  // ================= AUTO SUBMIT =================
+
   useEffect(() => {
     if (!started || !running) return;
     if (!solution) return;
@@ -431,13 +383,33 @@ export default function Sudoku() {
     const correct = checkComplete();
     if (!correct) return;
 
-    // Hentikan timer
+ 
     setRunning(false);
 
     async function autoSubmit() {
       let finalUsername = username;
 
-      // === TAMPILKAN LOADING ===
+      if (!loggedIn) {
+        Swal.fire({
+          icon: "success",
+          title: "🎉 Sudoku Completed!",
+          html: `
+        <p>You finished the puzzle!</p>
+        <p class="text-sm text-gray-600 mt-1">
+          Difficulty: <b>${level}</b><br/>
+          Time: <b>${seconds} seconds</b>
+        </p>
+        <p class="text-red-500 text-sm mt-2">
+          (Score not saved because you are not logged in)
+        </p>
+      `,
+          confirmButtonText: "OK",
+          confirmButtonColor: "#4F46E5",
+        });
+
+        setStarted(false);
+        return;
+      }
       Swal.fire({
         title: "Amazing...!",
         html: "Please wait a moment",
@@ -461,10 +433,10 @@ export default function Sudoku() {
 
         const data = await res.json();
 
-        // Tutup loading
+    
         Swal.close();
 
-        // === HASIL SUKSES ===
+
         Swal.fire({
           icon: "success",
           title: "🎉 Sudoku Completed!",
@@ -479,10 +451,10 @@ export default function Sudoku() {
           confirmButtonColor: "#4F46E5",
         });
       } catch (err) {
-        // Tutup loading
+
         Swal.close();
 
-        // === HASIL GAGAL ===
+  
         Swal.fire({
           icon: "error",
           title: "Submission Failed",
@@ -495,7 +467,7 @@ export default function Sudoku() {
     }
 
     autoSubmit();
-  }, [board]); // <== pantau tiap perubahan board
+  }, [board]);
 
   const counts = {};
   for (let n = 1; n <= 9; n++) counts[n] = 9;
@@ -505,7 +477,7 @@ export default function Sudoku() {
     }
   });
 
-  // ================= KEYBOARD INPUT =================
+
   useEffect(() => {
     function handleKey(e) {
       if (!started || !running) return;
@@ -515,11 +487,11 @@ export default function Sudoku() {
 
       if (initial[selectedIndex]) return;
 
-      // Input angka 1-9
+    
       if (/^[1-9]$/.test(key)) {
         const num = Number(key);
 
-        // Cegah input jika angka sudah 9 kali dipakai
+    
         if (counts[num] === 0) {
           console.warn(`Angka ${num} sudah penuh (9 kotak).`);
           return;
@@ -529,13 +501,13 @@ export default function Sudoku() {
         return;
       }
 
-      // Hapus angka
+ 
       if (key === "Backspace" || key === "Delete") {
         handleClear();
         return;
       }
 
-      // Toggle pencil mode
+
       if (key === "p" || key === "P") {
         togglePencilMode();
         return;
@@ -617,7 +589,34 @@ export default function Sudoku() {
                       <option value="expert">⚫ Expert</option>
                     </select>
                     <button
-                      onClick={startGame}
+                      onClick={() => {
+                        if (loggedIn) {
+                          startGame();
+                          return;
+                        }
+
+                        Swal.fire({
+                          title: "Continue Without Login?",
+                          text: "Your best time will NOT be saved to the leaderboard if you continue without logging in. Do you want to proceed?",
+                          icon: "warning",
+
+                          showCancelButton: true,
+                          showDenyButton: true,
+                          confirmButtonText: "Login",
+                          denyButtonText: "Continue",
+                          cancelButtonText: "Cancel",
+
+                          confirmButtonColor: "#2563eb",
+                          denyButtonColor: "#6b7280",
+                          cancelButtonColor: "#dc2626",
+                        }).then((res) => {
+                          if (res.isConfirmed) {
+                            navigate("/login");
+                          } else if (res.isDenied) {
+                            startGame();
+                          }
+                        });
+                      }}
                       className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-2 rounded-lg font-bold shadow-lg hover:shadow-xl transition transform hover:scale-105"
                     >
                       ▶️ Start Game
@@ -645,15 +644,12 @@ export default function Sudoku() {
                       📘 <span>Application Overview</span>
                     </button>
 
-                    {/* How to Play */}
                     <button
                       onClick={() => {
                         Swal.fire({
                           title: "🎮 How to Play",
                           html: `
          <ul style="text-align:left; line-height:1.6">
-  <li>• Begin by creating an account. Register with a username, password, and password confirmation.</li>
-  <li>• After registering, log in using the credentials you created.</li>
   <li>• Choose your preferred difficulty level and click the <b>Start Game</b> button.</li>
   <li>• Select any cell on the board, then press a number button below to fill the chosen cell.</li>
   <li>• If you're unsure about a number, enable <b>Pencil Mode</b> to place temporary notes.</li>
@@ -699,7 +695,7 @@ export default function Sudoku() {
                       👨‍💻 <span>About the Developer</span>
                     </button>
 
-                    {/* Privacy Policy */}
+              
                     <button
                       onClick={() => {
                         Swal.fire({

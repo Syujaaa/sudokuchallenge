@@ -15,7 +15,7 @@ export default function LoginForm() {
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
 
-  // === HCAPTCHA ===
+
   const [captchaToken, setCaptchaToken] = useState("");
   const [hcaptchaError, setHcaptchaError] = useState("");
   const hcaptchaRef = useRef(null);
@@ -44,7 +44,7 @@ export default function LoginForm() {
     if (!username.trim()) newErrors.username = "Username cannot be empty";
     if (!password.trim()) newErrors.password = "Password cannot be empty";
 
-    // === captcha wajib ===
+ 
     if (!captchaToken) newErrors.hcaptcha = "Please complete the captcha";
 
     setErrors(newErrors);
@@ -66,7 +66,7 @@ export default function LoginForm() {
         body: JSON.stringify({
           username,
           password,
-          "h-captcha-response": captchaToken, // <-- kirim token ke backend
+          "h-captcha-response": captchaToken, 
         }),
       });
 
@@ -131,7 +131,7 @@ export default function LoginForm() {
               </p>
             )}
 
-            {/* USERNAME */}
+      
             <div className="mb-5">
               <label className="block font-medium mb-1">Username</label>
               <input
@@ -150,7 +150,6 @@ export default function LoginForm() {
               )}
             </div>
 
-            {/* PASSWORD */}
             <div className="mb-6">
               <label className="block font-medium mb-1">Password</label>
 
@@ -181,7 +180,7 @@ export default function LoginForm() {
               )}
             </div>
 
-            {/* === HCAPTCHA === */}
+
             <div className="mb-6 flex flex-col items-center">
               <label className="block font-medium mb-2">Captcha</label>
 
