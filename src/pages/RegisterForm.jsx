@@ -237,8 +237,7 @@ export default function RegisterForm() {
             </div>
 
             <div className="mb-4 flex flex-col items-center justify-center">
-              <label className="block font-medium mb-2">Captcha</label>
-
+            
               <div className="flex justify-center">
                 <HCaptcha
                   sitekey="805e24ac-e564-49b4-8826-cefa686cd5ea"
