@@ -17,7 +17,7 @@ import BASE_URL from "../api";
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [adminUsername, setAdminUsername] = useState("");
-  const [activeTab, setActiveTab] = useState("users"); // users, sessions, or leaderboard
+  const [activeTab, setActiveTab] = useState("users");
   const [users, setUsers] = useState([]);
   const [leaderboard, setLeaderboard] = useState([]);
   const [selectedUserSessions, setSelectedUserSessions] = useState(null);
@@ -371,7 +371,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      {/* Header */}
+
       <header className="bg-gray-800 border-b border-gray-700 p-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div>
@@ -392,7 +392,7 @@ export default function AdminDashboard() {
         </div>
       </header>
 
-      {/* Tabs */}
+
       <div className="bg-gray-800 border-b border-gray-700 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto flex">
           <button
@@ -433,9 +433,9 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Content */}
+
       <main className="max-w-7xl mx-auto p-6">
-        {/* Users Tab */}
+
         {activeTab === "users" && (
           <div>
             <h2 className="text-2xl font-bold mb-6">Users Management</h2>
@@ -546,7 +546,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Sessions Tab */}
+
         {activeTab === "sessions" && (
           <div>
             <h2 className="text-2xl font-bold mb-6">
@@ -554,7 +554,7 @@ export default function AdminDashboard() {
             </h2>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Users List */}
+
               <div className="bg-gray-800 rounded-lg overflow-hidden">
                 <div className="bg-gray-700 px-6 py-3 font-semibold">
                   Users with Active Sessions
@@ -591,7 +591,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Sessions Details */}
+ 
               <div className="lg:col-span-2">
                 {selectedUserSessions ? (
                   <div className="bg-gray-800 rounded-lg overflow-hidden">
@@ -680,7 +680,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Leaderboard Tab */}
+
         {activeTab === "leaderboard" && (
           <div>
             <h2 className="text-2xl font-bold mb-6">Leaderboard Management</h2>

@@ -1,16 +1,5 @@
-// components/SudokuBoard.jsx
 import React from "react";
 
-/**
- * Props:
- * - puzzle: array[81] (angka 1-9 atau null)
- * - initial: array[81] boolean
- * - selectedIndex: number|null
- * - onSelect(index)
- * - notes: { [index]: number[] } (optional)
- * - checkConflict: function(index, val) => boolean (optional)
- * - filledCells: Set<number> (optional, for highlighting cells filled during surrender)
- */
 export default function SudokuBoard({
   puzzle = Array(81).fill(null),
   initial = Array(81).fill(false),
@@ -20,7 +9,6 @@ export default function SudokuBoard({
   checkConflict, // optional
   filledCells = new Set(), // optional
 }) {
-  // fallback conflict checker (O(81) per cell) kalau parent tidak menyediakan
   function localCheckConflict(index, val) {
     if (val === null) return false;
     const row = Math.floor(index / 9);

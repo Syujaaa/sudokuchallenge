@@ -188,17 +188,14 @@ export default function Sudoku() {
 
     if (!result.isConfirmed) return;
 
-    // Get random motivational message
     setCurrentMotivation(getRandomMotivation());
 
-    // Start surrender animation
     setSurrendered(true);
     setRunning(false);
     setHistory([]);
     setSelectedIndex(null);
     setFilledCells(new Set());
 
-    // Animate filling the board with solution
     let newBoard = [...board];
     let newNotes = { ...notes };
     const cellsToFill = [];
@@ -207,10 +204,7 @@ export default function Sudoku() {
       const userValue = Number(newBoard[i]);
       const correctValue = Number(solution[i]);
 
-      // Only fill if:
-      // 1. Cell is empty (null)
-      // 2. Cell has wrong value
-      // 3. Cell has pencil notes (should be replaced with correct number)
+
       const hasNotes = newNotes[i] && newNotes[i].length > 0;
       const isWrong = userValue !== null && userValue !== correctValue;
       const isEmpty = userValue === null;
@@ -220,17 +214,16 @@ export default function Sudoku() {
       }
     }
 
-    // Shuffle cells for random filling
+
     for (let i = cellsToFill.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [cellsToFill[i], cellsToFill[j]] = [cellsToFill[j], cellsToFill[i]];
     }
 
-    // Fill each cell with delay for animation effect
     for (let idx of cellsToFill) {
       await new Promise((resolve) => setTimeout(resolve, 100));
       newBoard[idx] = Number(solution[idx]);
-      // Clear notes for this cell
+
       delete newNotes[idx];
       setBoard([...newBoard]);
       setNotes({ ...newNotes });
