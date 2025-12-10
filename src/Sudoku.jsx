@@ -778,7 +778,6 @@ export default function Sudoku() {
   This application does not collect or store any personal user data beyond the information required for account creation. 
   All user passwords are securely hashed using bcrypt, ensuring that they cannot be viewed by the public or even by the developer.
   No cookies, tracking systems, or sensitive data storage mechanisms are used by this application itself. 
-  However, third-party services such as Google AdSense may use cookies to display personalized advertisements.
 </p>
 
         `,
