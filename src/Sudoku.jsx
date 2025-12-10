@@ -746,7 +746,9 @@ export default function Sudoku() {
                           title: "👨‍💻 About the Developer",
                           html: `
          <p style="text-align:left">
-  This application was developed by Farras Syuja, a full-stack developer who created this Sudoku game 
+  This application was developed by <a href="https://farrassyuja.my.id/" target="_blank" style="color:#2563eb; font-weight:bold;">
+    Farras Syuja
+  </a>, a full-stack developer who created this Sudoku game 
   with a strong focus on speed, user experience, and a clean, minimalistic interface.
   <br><br>
   For more information about the developer and other projects, feel free to visit:
@@ -908,12 +910,12 @@ export default function Sudoku() {
             ) : (
               <div className="space-y-2 max-h-96 overflow-y-auto">
                 {leaderboard.map((r, i) => {
-                  const isMe = r.username === username;
-
-                  return (
-                    <div
-                      key={r.id}
-                      className={`flex items-center justify-between p-3 rounded-lg transition
+  const isMe = r.username === username;
+  
+  return (
+    <div
+      key={r.id}
+      className={`flex items-center justify-between p-3 rounded-lg transition
         ${
           isMe
             ? "bg-indigo-50 border-l-4 border-indigo-500 shadow-sm"
@@ -927,39 +929,45 @@ export default function Sudoku() {
             : "bg-gray-50 hover:bg-gray-100"
         }
       `}
-                    >
-                      <div className="flex items-center gap-3 flex-1">
-                        <span className="text-lg font-bold text-gray-600 w-6 text-center">
-                          {i === 0
-                            ? "🥇"
-                            : i === 1
-                            ? "🥈"
-                            : i === 2
-                            ? "🥉"
-                            : `${i + 1}.`}
-                        </span>
+    >
+     
+      <div className="flex items-center gap-3 flex-1 min-w-0">
+    
+        <span className="text-lg font-bold text-gray-600 w-6 text-center shrink-0">
+          {i === 0
+            ? "🥇"
+            : i === 1
+            ? "🥈"
+            : i === 2
+            ? "🥉"
+            : `${i + 1}.`}
+        </span>
 
-                        <span
-                          className={`font-semibold truncate ${
-                            isMe ? "text-indigo-700" : "text-gray-800"
-                          }`}
-                        >
-                          {r.username}
-                          {isMe && " (You)"}
-                        </span>
-                      </div>
+      
+        <div className="min-w-0 flex-1" title={r.username + (isMe ? " (You)" : "")}>
+          <span
+            className={`font-semibold truncate block ${
+              isMe ? "text-indigo-700" : "text-gray-800"
+            }`}
+          >
+            {r.username}
+            {isMe && " (You)"}
+          </span>
+        </div>
+      </div>
 
-                      <span
-                        className={`font-mono font-bold text-sm ${
-                          isMe ? "text-indigo-700" : "text-indigo-600"
-                        }`}
-                      >
-                        {Math.floor(r.time_seconds / 60)}:
-                        {String(r.time_seconds % 60).padStart(2, "0")}
-                      </span>
-                    </div>
-                  );
-                })}
+     
+      <span
+        className={`font-mono font-bold text-sm shrink-0 ml-3 ${
+          isMe ? "text-indigo-700" : "text-indigo-600"
+        }`}
+      >
+        {Math.floor(r.time_seconds / 60)}:
+        {String(r.time_seconds % 60).padStart(2, "0")}
+      </span>
+    </div>
+  );
+})}
               </div>
             )}
           </aside>
