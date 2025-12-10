@@ -748,7 +748,7 @@ export default function Sudoku() {
          <p style="text-align:left">
   This application was developed by <a href="https://farrassyuja.my.id/" target="_blank" style="color:#2563eb; font-weight:bold;">
     Farras Syuja
-  </a>, a full-stack developer who created this Sudoku game 
+  </a> a full-stack developer who created this Sudoku game 
   with a strong focus on speed, user experience, and a clean, minimalistic interface.
   <br><br>
   For more information about the developer and other projects, feel free to visit:
